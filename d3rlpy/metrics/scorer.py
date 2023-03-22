@@ -275,6 +275,25 @@ def initial_state_value_estimation_scorer(
     return float(np.mean(total_values))
 
 
+## Adding true_q_scorer for AIPI590 Homework3, which calculates the total true discounted reward from initial action a and state s
+def true_q_value_scorer(algo: AlgoProtocol, episodes: List[Episode]) -> float:
+    for episode in episodes:
+        for batch in _make_batches(episode, WINDOW_SIZE, algo.n_frames):
+            # estimate values for next observations
+            next_actions = algo.predict([batch.next_observations[0]])
+            next_values = algo.predict_value(
+                [batch.next_observations[0]], next_actions
+            )
+            mask = (1.0 - np.asarray(batch.terminals)).reshape(-1)
+            rewards = np.asarray(batch.next_rewards).reshape(-1)
+            if algo.reward_scaler:
+                rewards = algo.reward_scaler.transform_numpy(rewards)
+            y = rewards + algo.gamma * cast(np.ndarray, next_values) * mask
+    return float(np.mean(y))
+
+
+
+
 def soft_opc_scorer(
     return_threshold: float,
 ) -> Callable[[AlgoProtocol, List[Episode]], float]:
