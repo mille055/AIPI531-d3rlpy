@@ -276,7 +276,7 @@ def initial_state_value_estimation_scorer(
 
 
 ## Adding true_q_scorer for AIPI590 Homework3, which calculates the total true discounted reward from initial action a and state s
-def true_q_value_scorer(algo: AlgoProtocol, episodes: List[Episode]) -> float:
+def true_q_scorer(algo: AlgoProtocol, episodes: List[Episode]) -> float:
     for episode in episodes:
         for batch in _make_batches(episode, WINDOW_SIZE, algo.n_frames):
             # estimate values for next observations
